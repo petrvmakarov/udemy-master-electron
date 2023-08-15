@@ -58,8 +58,7 @@ function createWindow () {
   // }, 2000);
 
   // Load index.html into the new BrowserWindow
-  // mainWindow.loadFile('index.html')
-  mainWindow.loadURL('https://saxotrader.com/go')
+    mainWindow.loadFile('index.html')
 
   //mainWindow.loadURL('https://httpbin.org/basic-auth/user/passwd')
   
