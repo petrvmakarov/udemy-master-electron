@@ -10,10 +10,11 @@ const {
 const windowStateKeeper = require("electron-window-state");
 const mainMenu = Menu.buildFromTemplate(require('./mainMenu'));
 const contextMenu = Menu.buildFromTemplate(require('./contextMenu'));
+const {createTray} = require('./tray');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+let mainWindow, tray;
 
 
 
@@ -43,6 +44,8 @@ function createWindow() {
       nodeIntegration: true,
     },
   });
+
+  tray = createTray(mainWindow);
 
   winState.manage(mainWindow);
 
