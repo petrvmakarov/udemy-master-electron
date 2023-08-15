@@ -4,6 +4,7 @@
   "description": "Master Electron Course Code",
   "main": "main.js",
   "scripts": {
+    "start:web": "node web.js",
     "start": "electron .",
     "watch": "nodemon --exec electron .",
     "reset": "git reset --hard"
@@ -21,6 +22,7 @@
     "nodemon": "^2.0.0"
   },
   "dependencies": {
-    "electron-window-state": "^5.0.3"
+    "electron-window-state": "^5.0.3",
+    "express": "^4.18.2"
   }
 }
