@@ -8,6 +8,7 @@
     <title>Hello World!</title>
     <style>
       html { font-family: sans-serif; background: #2B2E3B; color: #9FEAF9; }
+      a { color: #FFF; }
     </style>
   </head>
   <body style="user-select: none; -webkit-app-region:drag; padding-top: 10px;">
@@ -24,11 +25,76 @@
     </a>
 
     <textarea></textarea>
-    
+
+    <!-- <img src="https://placekitten.com/451/300"></img> -->
+
+    <img width="100%" src="" id="screenshot"><br>
+    <button id="screenshot-button">Get Screenshot</button>
+
+    <h3>
+      <ul>
+        <li>
+          <a href="#" onclick="newWin()">new window</a>
+        </li>
+        <li>
+          <a href="#" onclick="closeWin()">close window</a>
+        </li>
+        <li>
+          <a href="#" onclick="styleWin()">style window</a>
+        </li> 
+        <li>
+          <a href="#" onclick="zoomUp()">zoom up</a>
+        </li> 
+        <li>
+          <a href="#" onclick="zoomDown()">zoom down</a>
+        </li> 
+        <li>
+          <a href="#" onclick="zoomReset()">zoom reset</a>
+        </li> 
+      </ul>
+    </h3>
+
 
     <script>
       // You can also require other files to run in this process
-      require('./renderer.js')
+      require('./renderer.js');
+      const { webFrame } = require('electron');
+
+      console.log(webFrame.getResourceUsage())
+
+      let theWindow = null;
+
+      function zoomUp() {
+        webFrame.setZoomFactor(webFrame.getZoomFactor() + 0.1);
+      }
+
+      function zoomDown() {
+        webFrame.setZoomFactor(webFrame.getZoomFactor() - 0.1);
+      }
+
+      function zoomReset() {
+        webFrame.setZoomFactor(1);
+      }
+
+      function newWin() {
+        if (!theWindow) {
+          theWindow = window.open('https://developer.mozilla.org');
+          console.log({theWindow});
+        }
+      }
+
+      function closeWin() {
+        if (theWindow) {
+          theWindow.close();
+          theWindow = null;
+        }
+      }
+
+      function styleWin() {
+        if(theWindow) {
+          theWindow.eval("document.getElementsByTagName('h1')[0].style.fontFamily = 'Comic Sans MS'")
+        }
+      }
     </script>
   </body>
 </html>

@@ -1,12 +1,13 @@
 // Modules
+const electron = require('electron');
 const {
   app,
   BrowserWindow,
   webContents,
   session,
   Menu,
-  MenuItem,
-} = require("electron");
+  screen,
+} = electron;
 const windowStateKeeper = require("electron-window-state");
 const mainMenu = Menu.buildFromTemplate(require('./mainMenu'));
 const contextMenu = Menu.buildFromTemplate(require('./contextMenu'));
@@ -26,6 +27,8 @@ function createWindow() {
     defaultWidth: 1000,
     defaultHeight: 100,
   });
+
+  console.log(screen.getAllDisplays());
 
   mainWindow = new BrowserWindow({
     width: winState.width,
@@ -51,7 +54,7 @@ function createWindow() {
 
   let wc = mainWindow.webContents;
 
-  console.log({ webContents: webContents.getAllWebContents() });
+  // console.log({ webContents: webContents.getAllWebContents() });
 
   const customSession = session.fromPartition("persist:customSession");
 
@@ -68,12 +71,12 @@ function createWindow() {
 
   const ses = mainWindow.webContents.session;
 
-  console.log({ session: ses });
+  // console.log({ session: ses });
 
   wc.on("did-finish-load", () => {
     console.log("Content fully loaded");
     session.defaultSession.cookies.get({}).then((cookies) => {
-      console.log({ cookies });
+      //console.log({ cookies });
     });
   });
 
@@ -82,8 +85,8 @@ function createWindow() {
   });
 
   wc.on("new-window", (e, url) => {
-    e.preventDefault();
-    console.log(`Preventing new window to open for: ${url}`);
+    //e.preventDefault();
+    //console.log(`Preventing new window to open for: ${url}`);
     // console.log(`Creating new window for: ${url}`);
   });
 
