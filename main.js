@@ -7,6 +7,8 @@ const {
   session,
   Menu,
   screen,
+  ipcMain,
+  dialog,
 } = electron;
 const windowStateKeeper = require("electron-window-state");
 const mainMenu = Menu.buildFromTemplate(require('./mainMenu'));
@@ -20,6 +22,17 @@ let mainWindow, tray;
 
 
 Menu.setApplicationMenu(mainMenu);
+
+async function askFruit() {
+  const fruits = ['Apple', 'Banana', 'Grape'];
+
+  const choice = await dialog.showMessageBox({
+    message: 'Pick a fruit',
+    buttons: fruits,
+  });
+
+  return fruits[choice.response];
+}
 
 // Create a new BrowserWindow when `app` is ready
 function createWindow() {
@@ -106,7 +119,16 @@ function createWindow() {
 
   wc.on("context-menu", e => {
     contextMenu.popup();
-  })
+  });
+
+  ipcMain.on('channel1', (e, msg) => {
+    console.log('got message on channel1', {e, msg});
+    e.sender.send('channel1-response', 'Message received on "channel1". Thank you!')
+  });
+
+  ipcMain.handle('ask-fruit',(e, msg) => {
+    return askFruit();
+  });
 }
 
 // Electron `app` is ready

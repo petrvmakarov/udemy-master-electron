@@ -3,7 +3,16 @@
 // All of the Node.js APIs are available in this process.
 document.writeln('<h1>this is an output from js</h1>')
 
-const { desktopCapturer } = require('electron');
+const { desktopCapturer, ipcRenderer } = require('electron');
+
+
+document.getElementById('send').addEventListener('click', (e) => {
+  ipcRenderer.send('channel1', {message: 'hello from main window'});
+});
+
+ipcRenderer.on('channel1-response', (e, msg) => {
+  console.log(msg);
+})
 
 
 document.getElementById('screenshot-button').addEventListener('click', function() {
@@ -16,3 +25,14 @@ document.getElementById('screenshot-button').addEventListener('click', function(
   })
 });
 
+
+document.getElementById('ask').addEventListener('click', e => {
+  // ipcRenderer.send('ask-fruit');
+  ipcRenderer.invoke('ask-fruit').then((fruit) => {
+    alert(fruit);
+  });
+});
+
+ipcRenderer.on('fruit-picked', (e, fruit) => {
+  alert(fruit);
+})
