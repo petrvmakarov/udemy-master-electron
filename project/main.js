@@ -13,10 +13,7 @@ ipcMain.on('new-item', async (e, {url}) => {
 
   // Get new item send back to renderer
   const item = await readItem(url);
-
-  // setTimeout(() => {
-    e.sender.send('new-item-success', item);
-  // }, 2000);
+  e.sender.send('new-item-success', item);
 })
 
 // Create a new BrowserWindow when `app` is ready
