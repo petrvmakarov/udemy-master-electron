@@ -1,5 +1,5 @@
 // Modules
-const { ipcRenderer } = require('electron');
+const { ipcRenderer, shell } = require('electron');
 const items = require('../storage/items');
 
 // Dom nodes
@@ -72,6 +72,32 @@ ipcRenderer.on('new-item-success', (e, {url, screenshot, title}) => {
   items.addItem({url, screenshot, title});
   toggleModalButtons();
   closeModal.click();
+});
+
+ipcRenderer.on('menu-show-modal', (e) => {
+  showModal.click();
+});
+
+ipcRenderer.on('menu-open-selected-item', (e) => {
+  items.open();
+});
+
+ipcRenderer.on('menu-delete-selected-item', (e) => {
+  const element = items.getSelectedElement();
+  if(element) {
+    items.deleteItemById(element.dataset.id);
+  }
+});
+
+ipcRenderer.on('menu-open-in-browser-selected-item', (e) => {
+  const element = items.getSelectedElement();
+  if(element) {
+    shell.openExternal(element.dataset.url);
+  }
+});
+
+ipcRenderer.on('menu-focus-search', (e) => {
+  search.focus();
 });
 
 // Navigate thru items with keyboard

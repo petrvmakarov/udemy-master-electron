@@ -34,6 +34,10 @@ exports.addItem = ({ title, screenshot, url }) => {
   this.save();
 };
 
+exports.getSelectedElement = () => {
+  return Array.from(document.getElementsByClassName("read-item selected"))[0];
+}
+
 exports.select = (e) => {
   Array.from(document.getElementsByClassName("read-item selected")).forEach(
     (i) => {
