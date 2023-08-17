@@ -1,4 +1,8 @@
+const fs = require('fs'); 
+
 let items = document.getElementById("items");
+
+const readerJS = fs.readFileSync(`${__dirname}/../scripts/reader.js`).toString();
 
 const LS_ITEMS_KEY = "readit-items";
 
@@ -57,7 +61,18 @@ exports.open = () => {
   
   const url = selected.dataset.url;
 
-  console.log('Opening item with', {url});
+  const readerWin = window.open(url, '', `
+    maxWidth=2000,
+    maxHeight=2000,
+    width=1200,
+    height=800,
+    backgroundColor=#DEDEDE,
+    nodeIntegration=0,
+    contextIsolation=1
+  `);
+
+  readerWin.eval(readerJS);
+
 }
 
 function makeItemDomNodeAndAppend({ title, screenshot, url }) {
