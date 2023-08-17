@@ -17,7 +17,6 @@ readitClose.style.zIndex = '9999';
 
 readitClose.onclick = e => {  
   window.opener.postMessage({type: 'item-done', payload: selectedId}, '*');
-  window.close();
 }
 
 document.getElementsByTagName('body')[0].append(readitClose);
