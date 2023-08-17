@@ -121,6 +121,12 @@ function createWindow() {
     contextMenu.popup();
   });
 
+  wc.on("crashed", () => {
+    setTimeout(() => {
+      wc.reload();
+    }, 1000);
+  })
+
   ipcMain.on('channel1', (e, msg) => {
     console.log('got message on channel1', {e, msg});
     e.sender.send('channel1-response', 'Message received on "channel1". Thank you!')
