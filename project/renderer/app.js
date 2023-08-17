@@ -7,7 +7,8 @@ const showModal = document.getElementById('show-modal'),
       closeModal = document.getElementById('close-modal'),
       modal = document.getElementById('modal'),
       addItem = document.getElementById('add-item'),
-      itemUrl = document.getElementById('url');
+      itemUrl = document.getElementById('url'),
+      search = document.getElementById('search');
 
 // Disable & Enable modal buttons
 const toggleModalButtons = () => {
@@ -23,6 +24,15 @@ const toggleModalButtons = () => {
     closeModal.style.display = 'none';
   }
 }
+
+// Listening search changed
+search.addEventListener('keyup', () => {
+  Array.from(document.getElementsByClassName('read-item')).forEach(item => {
+    const hasMatch = item.innerText.toLowerCase().includes(search.value.trim().toLowerCase());
+    item.style.display = hasMatch ? 'flex' : 'none';
+  })
+
+});
 
 // Show modal
 showModal.addEventListener('click', e => {
@@ -62,4 +72,11 @@ ipcRenderer.on('new-item-success', (e, {url, screenshot, title}) => {
   items.addItem({url, screenshot, title});
   toggleModalButtons();
   closeModal.click();
+});
+
+// Navigate thru items with keyboard
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    items.changeSelection(e.key);
+  }
 })
