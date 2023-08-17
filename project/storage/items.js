@@ -2,20 +2,34 @@ const fs = require('fs');
 
 let items = document.getElementById("items");
 
+const idGenerator = new IdGenerator();
+
 const readerJS = fs.readFileSync(`${__dirname}/../scripts/reader.js`).toString();
 
 const LS_ITEMS_KEY = "readit-items";
 
-exports.storage = JSON.parse(localStorage.getItem(LS_ITEMS_KEY)) || [];
+const storage = (JSON.parse(localStorage.getItem(LS_ITEMS_KEY)) || [])/*.map(addId)*/;
+// localStorage.setItem(LS_ITEMS_KEY, JSON.stringify(storage));
+
+exports.storage = storage;
+
+window.addEventListener('message', e => {
+  if (e.data.type === 'item-done') {
+    const itemId = e.data.payload;    
+    exports.deleteItemById(itemId);
+    e.source.close();
+  }
+});
 
 exports.save = () => {
   localStorage.setItem(LS_ITEMS_KEY, JSON.stringify(this.storage));
 };
 
 exports.addItem = ({ title, screenshot, url }) => {
-  makeItemDomNodeAndAppend({ title, screenshot, url });
-
-  this.storage.push({ title, screenshot, url });
+  const item = { title, screenshot, url, id:idGenerator.newId() };
+  
+  makeItemDomNodeAndAppend(item);
+  this.storage.push(item);
 
   this.save();
 };
@@ -71,16 +85,33 @@ exports.open = () => {
     contextIsolation=1
   `);
 
-  readerWin.eval(readerJS);
+  readerWin.eval(readerJS.replace('{SELECTED_ID}', selected.dataset.id));
 
 }
 
-function makeItemDomNodeAndAppend({ title, screenshot, url }) {
+exports.deleteItemById = (id) => {
+  const item = storage.find(e => e.id === id);  
+  const element = Array.from(document.getElementsByClassName("read-item")).find(e => e.dataset.id === id);
+
+  if (item) {
+    this.storage = this.storage.filter(i => i.id !== id);
+    this.save();
+  }
+  if (element) {
+    element.parentElement.removeChild(element);
+  }
+}
+
+function makeItemDomNodeAndAppend({ title, screenshot, url, id }) {
+  if (!id) {
+    throw new Error('id is required');
+  }
   const itemNode = document.createElement("div");
 
   itemNode.setAttribute("class", "read-item");
 
   itemNode.setAttribute('data-url', url);
+  itemNode.setAttribute('data-id', id);
 
   itemNode.innerHTML = `<img src="${screenshot}"><h2>${title}</h2>`;
 
@@ -90,4 +121,18 @@ function makeItemDomNodeAndAppend({ title, screenshot, url }) {
   itemNode.addEventListener('dblclick', exports.open);
 }
 
-this.storage.forEach(makeItemDomNodeAndAppend);
+this.storage.forEach(e => makeItemDomNodeAndAppend(e));
+
+function IdGenerator() {
+  let id = 1;
+  return {
+    newId: () => `${(new Date()).getTime()}-${id++}`,    
+  }
+}
+
+function addId(i) {
+  if(!i.id) {
+    i.id = idGenerator.newId();
+  }
+  return i;
+}
