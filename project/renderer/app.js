@@ -1,5 +1,6 @@
 // Modules
 const { ipcRenderer } = require('electron');
+const items = require('../storage/items');
 
 // Dom nodes
 const showModal = document.getElementById('show-modal'),
@@ -56,8 +57,9 @@ itemUrl.addEventListener('keyup', e => {
 });
 
 // Listen for new-item event
-ipcRenderer.on('new-item-success', (e, {url}) => {
-  console.log('item in renderer', {url});
+ipcRenderer.on('new-item-success', (e, {url, screenshot, title}) => {
+  console.log('item in renderer', {url, screenshot, title});
+  items.addItem({url, screenshot, title});
   toggleModalButtons();
   closeModal.click();
 })
